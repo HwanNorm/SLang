@@ -287,6 +287,19 @@ class SLangInterpreter(SLangVisitor):
     def visitFunctionCall(self, ctx):
         # For now, we'll assume no user-defined functions
         raise ValueError("Function calls not supported in this interpreter")
+    
+
+    def visitWhileStatement(self, ctx):
+        while True:
+            condition = self.visit(ctx.expression())
+            if not isinstance(condition, bool):
+                raise ValueError("While condition must be boolean")
+            
+            if not condition:
+                break  # Exit the loop if condition is False
+                
+            self.visit(ctx.block())  # Execute the loop body
+        return None
 
 
 def interpret(code):
@@ -301,37 +314,43 @@ def interpret(code):
 
 
 if __name__ == "__main__":
-    # Example usage
-    sample_code = """
-    print("Slang says Hello!")
-    var int x = 5
-    var float y = 3.14
-    var boolean isActive = true
+    import sys
     
-    print x
-    print y
-    print "Hello, World!"
-    
-    if (x > 0) {
-        print "x is positive"
+    if len(sys.argv) > 1:
+        # Read from file
+        with open(sys.argv[1], 'r') as file:
+            code = file.read()
+            interpret(code)
+    else:
+        # Use the hardcoded example
+        sample_code = """
+        print("Slang says Hello!")
+        var int x = 5
+        var float y = 3.14
+        var boolean isActive = true
+        
+        print x
+        print y
+        print "Hello, World!"
+        
+        if (x > 0) {
+            print "x is positive"
         } 
-    else {
-    print "x is non-positive"
+        else {
+            print "x is non-positive"
         }
-    
-    var array arr = [1, 2, 3]
-    for i in arr {
-    print (i)
-    print (i*10)
-    }
-    
-    var int y = 10
-    var array numbers = [4,5,6,7]
-    for num in numbers{
-    y = num + 10
-    print(y)
-    }
-    
-
-    """
-    interpret(sample_code)
+        
+        var array arr = [1, 2, 3]
+        for i in arr {
+            print (i)
+            print (i*10)
+        }
+        
+        var int y = 10
+        var array numbers = [4,5,6,7]
+        for num in numbers {
+            y = num + 10
+            print(y)
+        }
+        """
+        interpret(sample_code)
