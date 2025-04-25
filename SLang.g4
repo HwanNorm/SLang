@@ -77,7 +77,7 @@ statement:
     | ifStatement
     | forLoop
     | expressionStatement
-    // Add a block statement to handle compound statements
+    | whileStatement
     ;
 block
     : LBRACE statement* RBRACE
